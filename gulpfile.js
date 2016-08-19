@@ -11,13 +11,14 @@ var buffer = require('gulp-buffer');
 var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
 var htmlmin = require('gulp-htmlmin');
-var babel = require('gulp-babel');
+var babelify = require('babelify');
 var less = require('gulp-less');
 var micro = require('gulp-micro');
 var size = require('gulp-size');
 var uglify = require('gulp-uglify');
 var zip = require('gulp-zip');
 var source = require('vinyl-source-stream');
+var typescript = require('gulp-tsc');
 
 program.on('--help', function() {
     console.log('  Tasks:');
@@ -38,38 +39,67 @@ program
 
 var prod = !!program.prod;
 
-var transpile = !!program.transpile;
+var tsc = !!program.tsc;
 
 gulp.task('default', ['build']);
 gulp.task('build', ['build_source', 'build_index', 'build_styles']);
 
-gulp.task('build_source', function() {
-    if (transpile) {
-        console.log("Building for ES5");
-        gulp.src('./src/**/*.js')
-            .pipe(babel({
-                presets: ['es2015']
-            }))
-            .pipe(concat('main.js'))
-            .pipe(gulpif(prod, uglify()))
-            .pipe(gulp.dest('build'));
-    } else {
-        console.log("Browserifying")
-        var bundler = browserify('./src/main', {
-            debug: !prod
-        });
-        if (prod) {
-            bundler.plugin(require('bundle-collapser/plugin'));
-        }
+// gulp.task('build_source', function() {
+//     // if (tsc) {
+//     //     gulp.src(['src/**/*.ts'])
+//     //         .pipe(typescript({
+//     //             target: "ES6"
+//     //         }))
+//     //         .pipe(gulp.dest('jssrc/'))
+//     //     var folder = 'jssrc/';
+//     // } else {
+//     //   var folder = './src/main'
+//     // }
+//
+//     var bundler = browserify('./src/main', {
+//         debug: !prod
+//     }).transform("babelify", {
+//         presets: ["es2015"]
+//     });
+//     if (prod) {
+//         bundler.plugin(require('bundle-collapser/plugin'));
+//     }
+//
+//     return bundler
+//         .bundle()
+//         // .on('error', browserifyError)
+//         // .pipe(source('main.js'))
+//         // .pipe(buffer())
+//         // .pipe(gulpif(prod, uglify()))
+//         .pipe(gulp.dest('build'));
+// });
 
-        return bundler
-            .bundle()
-            .on('error', browserifyError)
-            .pipe(source('main.js'))
-            .pipe(buffer())
-            .pipe(gulpif(prod, uglify()))
-            .pipe(gulp.dest('build'));
-    }
+gulp.task('build_source', function() {
+
+    var tempFolder = 'jsrrc/';
+        gulp.src(['src/**/*.ts'])
+            .pipe(typescript({
+                target: "ES6"
+            }))
+            .pipe(gulp.dest(tempFolder));
+
+    // 
+    // var bundler = browserify('./src/main', {
+    //     debug: !prod
+    // }).transform("babelify", {
+    //     presets: ["es2015"]
+    // });
+    // if (prod) {
+    //     bundler.plugin(require('bundle-collapser/plugin'));
+    // }
+    //
+    // return bundler
+    //     .bundle()
+    //     // .on('error', browserifyError)
+    //     // .pipe(source('main.js'))
+    //     // .pipe(buffer())
+    //     // .pipe(gulpif(prod, uglify()))
+    //     .pipe(gulp.dest('build'));
 });
 
 gulp.task('build_index', function() {
