@@ -1,22 +1,26 @@
 {
     "compilerOptions": {
         "target": "ES5",
-        "module": "system",
+        "module": "commonjs",
         "moduleResolution": "node",
-        "isolatedModules": true,
+        "diagnostics": true,
+        "isolatedModules": false,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": false,
         "noImplicitAny": false,
         "noImplicitUseStrict": false,
+        "listFiles": true,
         "removeComments": false,
         "noLib": false,
         "preserveConstEnums": true,
+        "pretty": true,
         "suppressImplicitAnyIndexErrors": true,
         "outDir": "jssrc"
     },
     "exclude": [
         "node_modules",
+        "../node_modules",
         "jssrc",
         "typings/browser",
         "typings/browser.d.ts"

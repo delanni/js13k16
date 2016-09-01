@@ -76,30 +76,32 @@ gulp.task('build', ['build_source', 'build_index', 'build_styles']);
 
 gulp.task('build_source', function() {
 
-    var tempFolder = 'jsrrc/';
-        gulp.src(['src/**/*.ts'])
-            .pipe(typescript({
-                target: "ES6"
-            }))
-            .pipe(gulp.dest(tempFolder));
+    // var tempFolder = 'jssrc/';
+    //     gulp.src(['src/**/*.ts'])
+    //         .pipe(typescript({
+    //             target: "ES6"
+    //         }))
+    //         .pipe(gulp.dest(tempFolder));
 
-    // 
-    // var bundler = browserify('./src/main', {
-    //     debug: !prod
-    // }).transform("babelify", {
+    //
+    var bundler = browserify('./jssrc/main', {
+        debug: !prod
+    })
+    // .transform("babelify", {
     //     presets: ["es2015"]
     // });
-    // if (prod) {
-    //     bundler.plugin(require('bundle-collapser/plugin'));
-    // }
-    //
-    // return bundler
-    //     .bundle()
-    //     // .on('error', browserifyError)
-    //     // .pipe(source('main.js'))
-    //     // .pipe(buffer())
-    //     // .pipe(gulpif(prod, uglify()))
-    //     .pipe(gulp.dest('build'));
+
+    if (prod) {
+        bundler.plugin(require('bundle-collapser/plugin'));
+    }
+
+    return bundler
+        .bundle()
+        .on('error', browserifyError)
+        .pipe(source('main.js'))
+        .pipe(buffer())
+        .pipe(gulpif(prod, uglify()))
+        .pipe(gulp.dest('build'));
 });
 
 gulp.task('build_index', function() {
@@ -113,7 +115,7 @@ gulp.task('build_index', function() {
 });
 
 gulp.task('build_styles', function() {
-    return gulp.src('src/styles.less')
+    return gulp.src('styles/styles.less')
         .pipe(less())
         .pipe(concat('build.css'))
         .pipe(gulpif(prod, cssmin()))
@@ -141,8 +143,8 @@ gulp.task('dist', ['build'], function() {
 });
 
 gulp.task('watch', function() {
-    gulp.watch('src/**/*.js', ['build_source']);
-    gulp.watch('src/styles.less', ['build_styles']);
+    gulp.watch('jssrc/**/*.js', ['build_source']);
+    gulp.watch('styles/*.less', ['build_styles']);
     gulp.watch('src/index.html', ['build_index']);
 });
 
