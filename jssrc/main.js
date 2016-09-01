@@ -1,4 +1,5 @@
 "use strict";
+var Pixel_1 = require("./Entities/Pixel");
 var RendererSystem_1 = require("./Systems/RendererSystem");
 var World_1 = require("./World");
 var world = new World_1.World();
@@ -9,4 +10,6 @@ var canvas = document.getElementById("gameCanvas");
 var rendererSystem = new RendererSystem_1.RendererSystem("canvasRenderer", canvas);
 world.addSystem(rendererSystem);
 world.initSystems();
+var pixel = new Pixel_1.Pixel();
+world.entities.push(pixel);
 world.startGameLoop();

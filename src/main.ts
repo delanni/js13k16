@@ -1,3 +1,4 @@
+import {Pixel} from "./Entities/Pixel";
 import {RendererSystem} from "./Systems/RendererSystem";
 import { Component } from "./Component";
 import { World } from "./World";
@@ -14,5 +15,8 @@ let rendererSystem = new RendererSystem("canvasRenderer", canvas);
 world.addSystem(rendererSystem);
 
 world.initSystems();
+
+let pixel = new Pixel();
+world.entities.push(pixel);
 
 world.startGameLoop();

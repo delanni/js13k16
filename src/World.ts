@@ -1,12 +1,15 @@
+import {Entity} from "./Entity";
 import {System} from "./System";
 
 export class World {
     _boundGameLoop: FrameRequestCallback;
     timeFactor: number;
     systems: System[];
+    entities: Entity[];
 
     constructor() {
         this.systems = [];
+        this.entities = [];
         this.timeFactor = 1.0;
     }
 
@@ -42,6 +45,19 @@ export class World {
     }
 
     private applySystems(deltaTime: number) {
-        this.systems.forEach(x => x.run(deltaTime));
+        this.systems.forEach(x => x.beforeRun(deltaTime));
+
+        this.systems.forEach(x => {
+            let targetEntities;
+            let predicate = x.entityPredicate;
+            if (!predicate){
+                targetEntities = this.entities;
+            } else {
+                targetEntities = this.entities.filter(predicate);
+            }
+            targetEntities.forEach(entity => {
+                x.applyToEntity(deltaTime, entity);
+            });
+        });
     }
 }

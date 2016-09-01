@@ -5,14 +5,15 @@ export class Component<T> {
     private internalId: string;
     private _value: T;
     private defaultValue: T;
-    public readonly name: string;  
+    public readonly name: string;
     private _hasValue: boolean;
 
-    constructor(private id: string, private componentKey: ComponentKey<T>, value: T = null) {
+    constructor(private id: string, public componentKey: ComponentKey<T>, value: T = null) {
         if (value === null) {
             this._hasValue = false;
         } else {
             this._hasValue = true;
+            this._value = value;
         }
 
         this.name = componentKey.componentName;
@@ -26,7 +27,7 @@ export class Component<T> {
 
     get value(): T {
         if (this.hasValue) {
-            return this.value;
+            return this._value;
         } else {
             return this.defaultValue;
         }

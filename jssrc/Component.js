@@ -9,6 +9,7 @@ var Component = (function () {
         }
         else {
             this._hasValue = true;
+            this._value = value;
         }
         this.name = componentKey.componentName;
         this.defaultValue = componentKey.defaultValue;
@@ -20,7 +21,7 @@ var Component = (function () {
     Object.defineProperty(Component.prototype, "value", {
         get: function () {
             if (this.hasValue) {
-                return this.value;
+                return this._value;
             }
             else {
                 return this.defaultValue;

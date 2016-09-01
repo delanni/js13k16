@@ -1,5 +1,4 @@
 "use strict";
-var ComponentKey_1 = require("./ComponentKey");
 var ArrayExtensions = require('./Utils/ArrayExtensions');
 var Entity = (function () {
     function Entity(name) {
@@ -7,10 +6,9 @@ var Entity = (function () {
         this.components = {};
         this.componentKeys = [];
     }
-    Entity.prototype.addComponent = function (name, component) {
-        this.components[name] = component;
-        this.componentKeys.push(name);
-        var x = this.getComponent(ComponentKey_1.ComponentKey.VISIBILITY);
+    Entity.prototype.addComponent = function (component) {
+        this.components[component.componentKey.key] = component;
+        this.componentKeys.push(component.name);
     };
     Entity.prototype.getComponent = function (componentKey) {
         return this.components[componentKey.key];

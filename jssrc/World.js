@@ -3,6 +3,7 @@ var World = (function () {
     function World() {
         this._currentTime = 0;
         this.systems = [];
+        this.entities = [];
         this.timeFactor = 1.0;
     }
     World.prototype.initSystems = function () {
@@ -28,7 +29,21 @@ var World = (function () {
         this.applySystems(delta);
     };
     World.prototype.applySystems = function (deltaTime) {
-        this.systems.forEach(function (x) { return x.run(deltaTime); });
+        var _this = this;
+        this.systems.forEach(function (x) { return x.beforeRun(deltaTime); });
+        this.systems.forEach(function (x) {
+            var targetEntities;
+            var predicate = x.entityPredicate;
+            if (!predicate) {
+                targetEntities = _this.entities;
+            }
+            else {
+                targetEntities = _this.entities.filter(predicate);
+            }
+            targetEntities.forEach(function (entity) {
+                x.applyToEntity(deltaTime, entity);
+            });
+        });
     };
     return World;
 }());

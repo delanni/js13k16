@@ -13,11 +13,9 @@ export class Entity {
         this.componentKeys = [];
     }
 
-    addComponent(name, component) {
-        this.components[name] = component;
-        this.componentKeys.push(name);
-
-        let x = this.getComponent(ComponentKey.VISIBILITY);
+    addComponent<T>(component: Component<T>) {
+        this.components[component.componentKey.key] = component;
+        this.componentKeys.push(component.name);
     }
 
     getComponent<T>(componentKey: ComponentKey<T>): Component<T> {

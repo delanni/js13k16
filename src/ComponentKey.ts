@@ -3,7 +3,7 @@ import {Component} from "./Component";
 export class ComponentKey <T> {
     public static VISIBILITY = new ComponentKey<boolean>("visibility", false);
 
-    private static componentKeyDirectory: {[key: string] : ComponentKey<any> }
+    private static componentKeyDirectory: {[key: string] : ComponentKey<any> } = {};
 
     private keyBase:string;
 
