@@ -1,3 +1,5 @@
+import {BoundingBox} from "../Math/BoundingBox";
+import {HasBoundingBox} from "../Traits/HasBoundingBox";
 import {ComponentKey} from "../ComponentKey";
 import {Component} from "../Component";
 import {Drawable} from "../Traits/Drawable";
@@ -5,7 +7,7 @@ import {EntityDrawer} from "../Components/EntityDrawer";
 import {Entity} from "../Entity";
 import {Vector2} from "../Math/Vector";
 
-export class Pixel extends Entity implements Drawable {
+export class Pixel extends Entity implements Drawable, HasBoundingBox {
     size: number;
     position: Vector2;
 
@@ -17,6 +19,10 @@ export class Pixel extends Entity implements Drawable {
         ctx.restore();
     }
 
+    getBoundingBox(): BoundingBox {
+        return null;
+    }
+    
     constructor() {
         super("Pixel");
 
