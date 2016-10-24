@@ -1,10 +1,12 @@
 "use strict";
+var Scene_1 = require("./Scene");
 var World = (function () {
     function World() {
         this._currentTime = 0;
         this.systems = [];
-        this.entities = [];
         this.timeFactor = 1.0;
+        this.currentScene = new Scene_1.Scene();
+        this.scenes = {};
     }
     World.prototype.initSystems = function () {
         this.systems.forEach(function (x) { return x.initialize(); });
@@ -26,24 +28,45 @@ var World = (function () {
         var delta = time - this._currentTime;
         this._currentTime = time;
         delta *= this.timeFactor;
+        this.currentScene.beforeFrame(delta);
         this.applySystems(delta);
+        this.currentScene.afterFrame(delta);
     };
     World.prototype.applySystems = function (deltaTime) {
         var _this = this;
-        this.systems.forEach(function (x) { return x.beforeRun(deltaTime); });
-        this.systems.forEach(function (x) {
+        var entities = this.currentScene.entities;
+        this.systems.forEach(function (system) {
+            system.beforeRun(deltaTime);
+            var scene = _this.currentScene;
+            scene.beforeSystem(system);
             var targetEntities;
-            var predicate = x.entityPredicate;
+            var predicate = system.entityPredicate;
             if (!predicate) {
-                targetEntities = _this.entities;
+                targetEntities = entities;
             }
             else {
-                targetEntities = _this.entities.filter(predicate);
+                targetEntities = entities.filter(predicate);
             }
             targetEntities.forEach(function (entity) {
-                x.applyToEntity(deltaTime, entity);
+                system.applyToEntity(deltaTime, entity);
             });
+            scene.afterSystem(system);
         });
+    };
+    World.prototype.addScene = function (sceneName, scene) {
+        scene.initialize(this);
+        this.scenes[sceneName] = scene;
+    };
+    World.prototype.setScene = function (sceneName) {
+        var oldScene = this.currentScene;
+        var newScene = this.scenes[sceneName];
+        if (newScene) {
+            newScene.beforeMount(this);
+        }
+        if (oldScene) {
+            oldScene.beforeUnmount(this);
+        }
+        this.currentScene = newScene;
     };
     return World;
 }());

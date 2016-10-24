@@ -7,3 +7,11 @@ function dropElement(array, element) {
     return element;
 }
 exports.dropElement = dropElement;
+function times(n, generator) {
+    var result = [];
+    for (var i = 0; i < n; i++) {
+        result.push(generator(i));
+    }
+    return result;
+}
+exports.times = times;

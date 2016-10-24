@@ -1,5 +1,3 @@
-import {Component} from "./Component";
-
 export class ComponentKey <T> {
     public static VISIBILITY = new ComponentKey<boolean>("visibility", false);
 

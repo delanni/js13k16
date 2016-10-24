@@ -1,3 +1,4 @@
+import {IScene, Scene} from "./Scene";
 import {Entity} from "./Entity";
 import {System} from "./System";
 
@@ -5,12 +6,15 @@ export class World {
     _boundGameLoop: FrameRequestCallback;
     timeFactor: number;
     systems: System[];
-    entities: Entity[];
+
+    currentScene: IScene;
+    scenes: {[sceneName: string]: IScene};
 
     constructor() {
         this.systems = [];
-        this.entities = [];
         this.timeFactor = 1.0;
+        this.currentScene = new Scene();
+        this.scenes = {};
     }
 
     public initSystems() {
@@ -41,23 +45,48 @@ export class World {
 
         delta *= this.timeFactor;
 
+        this.currentScene.beforeFrame(delta);
         this.applySystems(delta);
+        this.currentScene.afterFrame(delta);
     }
 
     private applySystems(deltaTime: number) {
-        this.systems.forEach(x => x.beforeRun(deltaTime));
+        let entities = this.currentScene.entities;
 
-        this.systems.forEach(x => {
+        this.systems.forEach(system => {
+            system.beforeRun(deltaTime)
+
+            let scene = this.currentScene;
+            scene.beforeSystem(system);
+
             let targetEntities;
-            let predicate = x.entityPredicate;
+            let predicate = system.entityPredicate;
             if (!predicate){
-                targetEntities = this.entities;
+                targetEntities = entities;
             } else {
-                targetEntities = this.entities.filter(predicate);
+                targetEntities = entities.filter(predicate);
             }
             targetEntities.forEach(entity => {
-                x.applyToEntity(deltaTime, entity);
+                system.applyToEntity(deltaTime, entity);
             });
+
+            scene.afterSystem(system);
         });
+    }
+
+    public addScene(sceneName: string, scene: IScene){
+        scene.initialize(this);
+        this.scenes[sceneName] = scene;
+    }
+    public setScene(sceneName: string){
+        let oldScene = this.currentScene;
+        let newScene = this.scenes[sceneName];
+        if (newScene){
+            newScene.beforeMount(this);
+        }
+        if (oldScene){
+            oldScene.beforeUnmount(this);
+        }
+        this.currentScene = newScene;
     }
 }

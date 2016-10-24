@@ -5,3 +5,13 @@ export function dropElement<T>(array: T[], element: T): T {
     }
     return element;
 }
+
+export function times<T>(n: number, generator: (i?:number)=>T): T[] {
+    let result: T[] = [];
+
+    for(var i=0;i<n;i++){
+        result.push(generator(i));
+    }
+
+    return result;
+}

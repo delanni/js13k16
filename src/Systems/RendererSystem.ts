@@ -17,7 +17,7 @@ export class RendererSystem implements System {
     public initialize() {
         this.ctx = this.canvas.getContext("2d");
 
-        this.drawerComponentKey = ComponentKey.create("drawer", ()=>{}); 
+        this.drawerComponentKey = EntityDrawer.componentKey;
 
         console.log(`RendererSystem ${this.name} initialized.`);
     }
